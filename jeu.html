@@ -1,0 +1,318 @@
+<!doctype html>	
+	<html>
+		<head>
+			<meta charset ="utf-8" />
+		</head>
+		<body>
+			<style>
+				#terrain{
+					width: 600px;
+					height: 400px;
+					margin: auto;
+					overflow: hidden;
+					position: relative;
+				}	
+				#fond{
+					z-index: 0;
+					width: 1200px;
+					height: 400px;
+					top: 0px;
+				}
+				img{
+					position: absolute;
+					width: 55px;
+					height: 67px;
+					left: 0px;
+					top: 282px;
+					z-index: 200;
+				}
+				#barre{
+					width: 210px;
+					height: 10px;
+					border: 1px solid white;
+					background-color: green;
+					position: absolute;
+					top: 250px;
+					left: 300px;
+				}
+				#bricO, #bricO1{
+					position: absolute;
+					width: 55px;
+					height: 55px;
+					top: 117px;
+					left: 370px;
+					z-index: 100;
+				}
+			</style>
+			<div id="terrain">
+				<img src="fondMarioLarge.png" alt="fond" id="fond" />
+				<div id="barre"></div>
+				<img src ="BlocO.png" alt="bric0" id="bricO" />
+			</div>
+			<script src="jQuery/jquery-2.2.1.js"></script>
+			<script>
+				$(document).ready(function(){
+					var blocPo = 0;
+					var barrePo = 0;
+					var marioPo = 0; 
+					var champiPo = 0;
+					var poFond = 0;
+					var positionMario = 0;
+					var positionMarioT = 282;
+					var sautH = 133;
+					var sautB = 133;
+					var tempsB = 500;
+					var tempsH = 500;
+					var down = false;
+					var d = 0;
+					var g = 0;
+					var s = 0;
+					var paf = 0;
+					var largeur = 55;
+					var grandeur = 67;
+					var barrePoI = 300;
+					var i = Math.floor(5000 + Math.random()*120000);
+					var mario = '<img src="Mario-3.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px;"/>';
+					var champiGros = '<img src="champiGros.png" alt="champiGros" id="champiGros" style="width:30px; height:30px; position:absolute; top:137px; left:380px; z-index: 80; display: none;" />';
+					var champiPoI = 380;
+					var missile = '<img src="missile.png" alt ="missile" id="missile" style ="width :90px; height: 70px; top: 269px; left : 800px; display: none" />';
+					var blocPoI = 370;
+					
+					$("#terrain").append(bricO);
+					$("#terrain").append(mario);
+					$("#terrain").append(champiGros);
+					$("#terrain").append(missile);
+
+					$(document).keydown(function (e){
+
+						if(e.which === 37){g =1;
+							$("#mario").replaceWith('<img src="Mario-2.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;"/>');
+					        if(positionMario > 0){
+					      		$("#mario").css("left",(positionMario-=5)+"px").css("top", positionMarioT+"px");
+					      		if(positionMario <= 0){
+					      			positionMario = 0;
+					      		}
+					      	}
+					      	if(positionMario === 0 && poFond < 0){
+						      		$("#fond").css("left", (poFond += 5)+"px");
+						      		$("#bricO").css("left", (blocPoI +poFond)+"px");
+						      		$("#barre").css("left", (barrePoI +poFond)+"px");
+						      		$("#champiGros").css("left", (champiPoI +poFond)+"px");
+						      		if($("#bricO1"))
+						      			$("#bricO1").css("left", (blocPoI +poFond)+"px");
+					      	}
+						}
+						if(e.which === 40){
+							if(grandeur === 67)
+								positionMarioT = 282;
+							else if(grandeur === 134)
+								positionMarioT = 219;
+							$("#mario").replaceWith('<img src="Mario-3.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;" />');
+						}
+						if(e.which === 39){
+							$("#mario").replaceWith('<img src="Mario-4.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;" />');
+							if(positionMario < 300 || poFond === -595 && positionMario < 547)
+					      		$("#mario").css("left",(positionMario+=5)+"px").css("top", positionMarioT+"px");
+					      	else if(positionMario >= 300 && poFond >= -595){
+					      		console.log(poFond);
+					      		$("#fond").css("left", (poFond -= 5)+"px");
+					      		$("#bricO").css("left", (blocPoI+poFond)+"px");
+					      		$("#barre").css("left", (barrePoI+poFond)+"px");
+					      		$("#champiGros").css("left", (champiPoI+poFond)+"px");
+					      		if($("#bricO1"))
+					      			$("#bricO1").css("left", (blocPoI+poFond)+"px");
+					      	}
+
+						}
+						if(e.which === 38){
+							if(!down){
+								down = true; s = 1;
+								$("#mario").replaceWith('<img src="Mario-4.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;" />');
+								$("#mario").animate({top: (positionMarioT -=sautH)+"px"}, tempsH, function (e){
+									$("#mario").animate({top : (positionMarioT += sautB)+"px"}, tempsB, function (e){
+										$("#mario").replaceWith('<img src="Mario-3.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;"/>');
+									});
+								});
+							}			
+						}	
+						if(s === 1 && d === 1){
+							$("#mario").animate({left: positionMario+100}, 800, function (e){
+								positionMario += 100;
+							});
+						}
+						if(s === 1 && g === 1){
+							$("#mario").replaceWith('<img src="Mario-2.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;" />');
+							$("#mario").animate({left: positionMario-100}, 500, function (e){
+								positionMario -= 100;
+							});
+						}								
+					});
+					$(document).keyup(function (e){
+						if(e.which === 37 || e.which === 38 || e.which === 39){
+							
+						}
+						if(e.which === 37){
+							$("#mario").replaceWith('<img src="Mario-1.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;"/>');g = 0;
+							 			
+							
+						}
+						if(e.which === 39 || e.which === 33){
+							$("#mario").replaceWith('<img src="Mario-3.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top :'+positionMarioT+'px; width :'+largeur+'px; height : '+grandeur+'px;"/>');
+								d = 0;
+						}
+						if(e.which === 38 || e.which === 33)
+							down = false; s = 0;
+					});
+
+					function collisions(){
+						marioPo = $("#mario").offset();
+						missilePo = $("#missile").offset();
+						champiPo = $("#champiGros").offset();
+						barrePo = $("#barre").offset();
+						if(paf === 0)
+							blocPo = $("#bricO").offset();
+						else
+							blocPo = $("#bricO1").offset();							
+
+						if(positionMario < 0)
+							positionMario = 0;
+						else if(positionMario > 547)
+							positionMario = 547;
+						if(positionMarioT > 229 && grandeur === 134){
+							positionMarioT = 229;
+						}
+						else if(positionMarioT > 282 && grandeur === 67){
+							positionMarioT = 282;
+						}
+						if(grandeur === 134 && d === 1 && marioPo.left+100 < barrePo.left && positionMarioT === 219 || grandeur === 134 && d === 0 && marioPo.left+100 < barrePo.left && positionMarioT === 119 || grandeur === 134 && marioPo.left+75 > barrePo.left+250 && positionMarioT === 119){
+							positionMarioT = 219;
+						}
+						else if(d === 1 && marioPo.left+125 < barrePo.left && positionMarioT === 282 || d === 0 && marioPo.left+25 < barrePo.left && positionMarioT === 184 || marioPo.left+55 > barrePo.left+250 && positionMarioT === 184){
+							positionMarioT = 282;
+						}
+						if(marioPo.left+25 > blocPo.left && positionMarioT < 170 && marioPo.left+25 < blocPo.left+55){
+								$("#bricO").animate({top : "112px"}, 50, function (e){
+									champignons();
+									$("#bricO").animate({top : "117px"}, 50, function (e){
+										paf = 1;
+										$("#bricO").attr('src', 'BlocO1.png').attr("id", "bricO1").css("position", "absolute").css("left", $("#brico").css("left"));
+									});
+								});
+							}
+						if(marioPo.left+25 > missilePo.left && marioPo.left < missilePo.left+90 && marioPo.top > missilePo.top || grandeur === 134 && marioPo.left+100 > missilePo.left && marioPo.left < missilePo.left+90 && marioPo.top+134 > missilePo.top){
+							$("#mario").replaceWith('<img src="MarioCoucher.png" id ="mario" alt ="mario" style = "left :'+positionMario+'px; top : 305px; width:67px; height:55px;"/>');
+							largeur = 55;
+							grandeur = 67;
+							positionMarioT = 282;
+							setTimeout(function (e){
+								$("#missile").stop();
+								$("#missile").animate({top: "470px"}, 200);
+							}, 50);
+						}
+						if (marioPo.top+67 === missilePo.top && marioPo.left+25 > missilePo.left && marioPo.left < missilePo.left+90){
+							console.log("pomme !");
+							setTimeout(function (e){
+								$("#mario").animate({top : marioPo.top-20}, 100).animate({top: marioPo.top+20}, 100);
+								$("#missile").stop();
+								$("#missile").animate({top: "470px"}, 200);
+							}, 50);
+						}
+						if(marioPo.left+12 > champiPo.left && marioPo.left < champiPo.left+30 && positionMarioT > 235 && marioPo.top+38 === champiPo.top){
+							$("#mario").animate({width: "110px", height: "134px", top:"219px"}, 500);
+							largeur = 110;
+							grandeur = 134;
+							positionMarioT = 219;
+							$("#champiGros").css("display", "none");
+							setTimeout(function(){
+								$("#mario").animate({width: "55px", height: "67px", top:"282px"}, 500);
+								largeur = 55;
+								grandeur = 67;
+								positionMarioT = 282;
+							}, 15000);
+						}
+						if(marioPo.left+12 > champiPo.left && marioPo.left < champiPo.left+30 && positionMarioT <= 235 && marioPo.top+35 === champiPo.top){
+							$("#mario").animate({width: "110px", height: "134px", top:"119px"}, 500);
+							largeur = 110;
+							grandeur = 134;
+							positionMarioT = 119;
+							$("#champiGros").css("display", "none");
+							setTimeout(function(){
+								$("#mario").animate({width: "55px", height: "67px", top:"184px"}, 500);
+								largeur = 55;
+								grandeur = 67;
+								positionMarioT = 184;
+							}, 15000);
+						}	
+						if(!down && d === 1  && marioPo.left+25 < barrePo.left && positionMarioT === 282 || !down && marioPo.left+55 > barrePo.left+250 && positionMarioT === 282){
+							sautH = 133;
+							sautB = 35;
+							tempsH = 500;
+							tempsB = 500;
+						}
+						else if(!down && d === 0  && marioPo.left+25 < barrePo.left && positionMarioT === 282 || !down && d === 0  && marioPo.left+55 > barrePo.left+250 && positionMarioT === 282){
+							sautH = 133;
+							sautB = 133;
+							tempsH = 500;
+							tempsB = 500;
+						}
+						else if(!down && marioPo.left+25 > barrePo.left && positionMarioT === 282 || !down && marioPo.left+55 < barrePo.left+250 && positionMarioT ===282){
+							sautH = 30;
+							sautB = 30;
+							tempsH = 50;
+							tempsB = 50;
+						}
+						else if(!down && grandeur === 134 && marioPo.left+125 >= barrePo.left && positionMarioT === 219 || !down && grandeur === 134 && marioPo.left+55 < barrePo.left+250 && positionMarioT === 219){
+							sautH = 133;
+							sautB = 33;
+							tempsH = 500;
+							tempsB = 50;
+						}
+						else if(!down && marioPo.left+125 >= barrePo.left && positionMarioT === 282 || !down && marioPo.left+55 < barrePo.left+250 && positionMarioT === 282){
+							sautH = 133;
+							sautB = 35;
+							tempsH = 500;
+							tempsB = 50;
+						}
+						else if(!down && marioPo.left+25 > blocPo.left && positionMarioT === 184 && marioPo.left+25 < blocPo.left+55){
+								sautH = 40;
+								sautB = 40;
+								tempsH = 50;
+								tempsB = 50;
+						}
+						else if(!down && grandeur === 134 && marioPo.left+100 > barrePo.left && positionMarioT === 119 || !down && grandeur === 134 && marioPo.left+75 < barrePo.left+250 && positionMarioT === 119){
+								sautH = 133;
+								sautB = 133;
+								tempsH = 500;
+								tempsB = 500;
+						}		
+						else if(!down && marioPo.left+25 > barrePo.left && positionMarioT === 184 || !down && marioPo.left+55 < barrePo.left+250 && positionMarioT ===181){
+								sautH = 133;
+								sautB = 133;
+								tempsH = 500;
+								tempsB = 500;
+						}						
+					};
+					function Missile(){
+						$("#missile").fadeIn(200);		
+						$("#missile").animate({left : "-90px"}, 20000, function (e){
+							if($("#missile").css("left") === "-90px"){
+								$("#missile").css("left", "800px").css("top", "269px").css("display", "none");
+							}
+						});
+					}
+					function champignons() {
+						$("#champiGros").fadeIn(200);
+						$("#champiGros").animate({top:"92px"}, 500).animate({left:parseInt($("#bricO").css("left"))-30}, 1000).animate({top: "219px"}, 1500).animate({left: parseInt($("#bricO").css("left"))-95},2500).animate({top:"320px"}, 1000).animate({left: "-50px"}, 10000, function (e){
+										$("#champiGros").css("left", "380px").css("top", "137px").css("display","none");
+										$("#champiGros").clearQueue();
+									});
+					}
+					
+					
+					
+					setInterval(collisions, 20);
+					setInterval(Missile, 2500);
+				});
+			</script>
+		</body>1
+	</html>		
